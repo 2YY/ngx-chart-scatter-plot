@@ -1,0 +1,1 @@
+ngx-chart-scatter-plot
