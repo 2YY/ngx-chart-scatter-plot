@@ -17,7 +17,13 @@
     "lib": [
       "es2018",
       "dom"
-    ]
+    ],
+    "paths": {
+      "lib-ngx-chart-scatter-plot": [
+        "dist/lib-ngx-chart-scatter-plot/lib-ngx-chart-scatter-plot",
+        "dist/lib-ngx-chart-scatter-plot"
+      ]
+    }
   },
   "angularCompilerOptions": {
     "fullTemplateTypeCheck": true,
