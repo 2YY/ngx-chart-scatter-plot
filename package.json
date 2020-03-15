@@ -6,7 +6,10 @@
     "start": "ng serve",
     "build": "ng build",
     "test": "ng test",
-    "lint": "ng lint",
+    "lint": "run-p lint:*",
+    "lint:html": "prettier 'src/**/*.html' --write",
+    "lint:ng": "ng lint",
+    "lint:scss": "stylelint 'src/**/*.scss' --fix",
     "e2e": "ng e2e"
   },
   "private": true,
@@ -35,6 +38,7 @@
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "^12.11.1",
     "codelyzer": "^5.1.2",
+    "husky": "^4.2.3",
     "jasmine-core": "~3.5.0",
     "jasmine-spec-reporter": "~4.2.1",
     "karma": "~4.3.0",
@@ -42,10 +46,29 @@
     "karma-coverage-istanbul-reporter": "~2.1.0",
     "karma-jasmine": "~2.0.1",
     "karma-jasmine-html-reporter": "^1.4.2",
+    "lint-staged": "^10.0.7",
     "ng-packagr": "^9.0.0",
+    "npm-run-all": "^4.1.5",
+    "prettier": "^1.19.1",
     "protractor": "~5.4.3",
+    "stylelint": "^13.2.0",
+    "stylelint-config-prettier": "^8.0.1",
+    "stylelint-config-rational-order": "^0.1.2",
+    "stylelint-config-recommended-scss": "^4.2.0",
+    "stylelint-declaration-block-no-ignored-properties": "^2.2.0",
+    "stylelint-scss": "^3.14.2",
     "ts-node": "~8.3.0",
     "tslint": "~5.18.0",
     "typescript": "~3.7.5"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "projects/lib-ngx-chart-scatter-plot/src/lib/**/*.ts": "tslint",
+    "*.html": "npm run lint:html",
+    "*.scss": "npm run lint:scss"
   }
 }
