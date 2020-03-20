@@ -23,7 +23,7 @@ export class LibNgxChartScatterPlotComponent implements AfterViewInit {
 
   /**
    * in World Coords.
-   * width and height is absolute coords diagonal from origin in world coords.
+   * the width and height will regarded as absolute coords diagonal from origin in world coords for convenience.
    */
   @Input() set camera(rect: PIXI.Rectangle) {
     this.cameraRect = rect;
@@ -145,24 +145,24 @@ export class LibNgxChartScatterPlotComponent implements AfterViewInit {
     const vH = this.containerChartRef.nativeElement.clientHeight;
     const cX = this.cameraRect.x;
     const cY = this.cameraRect.y;
-    const cW = this.cameraRect.width - cX; // NOTE: width is absolute "x"
+    const cW = this.cameraRect.width - cX;
     const cH = this.cameraRect.height - cY;
-    const scaleC = new PIXI.Point(1 / vW, 1 / vH);
-    const panC = new PIXI.Point(cX * (1 / vW), cY * (1 / vH));
-    const scaleV = new PIXI.Point(cW / vW, cH / vH);
-    const panV = new PIXI.Point();
-    const matTransformWorldToCamera = new PIXI.Matrix().set(scaleC.x, 0, 0, scaleC.y, panC.x, panC.y);
-    const matTransformWorldToScreen = new PIXI.Matrix().set(0, 0, 0, 0, 0, 0);
+
+    const matTransformWorldToScreen = new PIXI.Matrix().set(
+      vW / cW,
+      0,
+      0,
+      vH / cH,
+      -cX * (vW / cW),
+      -cY * (vH / cH)
+    );
+
     this.matTransformArrWorldToScreen = [
-      matTransformWorldToCamera,
       matTransformWorldToScreen
     ];
     this.matTransformArrScreenToWorld = [
-      matTransformWorldToScreen,
-      matTransformWorldToCamera
+      matTransformWorldToScreen
     ];
-
-    console.log(matTransformWorldToScreen);
   }
 
 }
