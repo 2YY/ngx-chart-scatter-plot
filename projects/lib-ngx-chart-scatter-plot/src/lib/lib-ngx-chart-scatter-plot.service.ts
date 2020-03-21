@@ -84,23 +84,25 @@ export class LibNgxChartScatterPlotService {
     this.isPanning = false;
   }
 
-  zoom(e: WheelEvent, camera: PIXI.Rectangle, cursorPos: PIXI.Point) {
+  zoom(e: WheelEvent, camera: PIXI.Rectangle, matTransform: PIXI.Matrix, cursorPos: PIXI.Point) {
 
     e.preventDefault();
 
     if (!this.isPanning) {
       const rate = 1 - e.deltaY * .001;
-      const amount = new PIXI.Point(
-        (camera.width - camera.x) / rate - (camera.width - camera.x),
-        (camera.height - camera.y) / rate - (camera.height - camera.y)
+      const matTransformScale = new PIXI.Matrix(rate, 0, 0, rate, 0, 0);
+      const cursorWorldPosBeforeScale = matTransform.applyInverse(cursorPos);
+      const cursorWorldPosAfterScale = matTransformScale.applyInverse(cursorPos);
+      const cameraCornerA = matTransformScale.apply(new PIXI.Point(camera.x, camera.y));
+      const cameraCornerB = matTransformScale.apply(new PIXI.Point(camera.width, camera.height));
+      const result = new PIXI.Rectangle(
+        cameraCornerA.x,
+        cameraCornerA.y,
+        cameraCornerB.x,
+        cameraCornerB.y
       );
-
-      return new PIXI.Rectangle(
-        camera.x - (amount.x / 2 * cursorPos.x),
-        camera.y - (amount.y / 2 * cursorPos.y),
-        camera.width + (amount.x / 2 * (1 - cursorPos.x)),
-        camera.height + (amount.y / 2 * (1 - cursorPos.y))
-      );
+      // TODO: adjust to invisible walls bounding box
+      return result;
     }
 
     return camera;

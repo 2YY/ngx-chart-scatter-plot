@@ -66,11 +66,11 @@ export class LibNgxChartScatterPlotComponent implements AfterViewInit {
   private plotDataArr: Plot[];
 
   private matTransform: PIXI.Matrix;
-  private matTransformsToggleOrigin = {
+  private matTransformsToggleOrigin = { // NOTE: tx and ty is flag. (it's not pan amount. see updateMatTransformArr method.)
     leftTop:     new PIXI.Matrix(1, 0, 0, 1, 0, 0),
-    leftBottom:  new PIXI.Matrix(1,  0, 0, -1, 0, 0),
-    rightBottom: new PIXI.Matrix(-1, 0, 0, -1, 0, 0),
-    rightTop:    new PIXI.Matrix(-1, 0, 0,  1, 0, 0)
+    leftBottom:  new PIXI.Matrix(1,  0, 0, -1, 0, 1),
+    rightBottom: new PIXI.Matrix(-1, 0, 0, -1, 1, 1),
+    rightTop:    new PIXI.Matrix(-1, 0, 0,  1, 1, 0)
   };
 
   private cursor = new PIXI.Point(.5, .5);
@@ -169,9 +169,15 @@ export class LibNgxChartScatterPlotComponent implements AfterViewInit {
       -cX * (vW / cW), // NOTE: x panning
       -cY * (vH / cH) // NOTE: y panning
     );
-    if (this.optionsRef.origin !== 'leftTop') {
-      this.matTransform.append(this.matTransformsToggleOrigin[this.optionsRef.origin]);
-    }
+
+    this.matTransform.prepend(this.matTransformsToggleOrigin[this.optionsRef.origin].set(
+      this.matTransformsToggleOrigin[this.optionsRef.origin].a,
+      this.matTransformsToggleOrigin[this.optionsRef.origin].b,
+      this.matTransformsToggleOrigin[this.optionsRef.origin].c,
+      this.matTransformsToggleOrigin[this.optionsRef.origin].d,
+      this.matTransformsToggleOrigin[this.optionsRef.origin].tx * this.containerChartRef.nativeElement.clientWidth,
+      this.matTransformsToggleOrigin[this.optionsRef.origin].ty * this.containerChartRef.nativeElement.clientHeight
+    ));
   }
 
   getMatTransform() {
@@ -188,8 +194,8 @@ export class LibNgxChartScatterPlotComponent implements AfterViewInit {
 
   updateCursor(e: MouseEvent) {
     if (this.containerChartRef.nativeElement) {
-      this.cursor.x = e.offsetX / this.containerChartRef.nativeElement.clientWidth;
-      this.cursor.y = e.offsetY / this.containerChartRef.nativeElement.clientHeight;
+      this.cursor.x = e.offsetX;
+      this.cursor.y = e.offsetY;
     }
   }
 
