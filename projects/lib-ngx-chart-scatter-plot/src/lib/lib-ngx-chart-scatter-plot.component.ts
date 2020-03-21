@@ -170,7 +170,7 @@ export class LibNgxChartScatterPlotComponent implements AfterViewInit {
       -cY * (vH / cH) // NOTE: y panning
     );
 
-    this.matTransform.prepend(this.matTransformsToggleOrigin[this.optionsRef.origin].set(
+    this.matTransform.prepend(new PIXI.Matrix().set(
       this.matTransformsToggleOrigin[this.optionsRef.origin].a,
       this.matTransformsToggleOrigin[this.optionsRef.origin].b,
       this.matTransformsToggleOrigin[this.optionsRef.origin].c,
@@ -194,8 +194,8 @@ export class LibNgxChartScatterPlotComponent implements AfterViewInit {
 
   updateCursor(e: MouseEvent) {
     if (this.containerChartRef.nativeElement) {
-      this.cursor.x = e.offsetX;
-      this.cursor.y = e.offsetY;
+      this.cursor.x = e.offsetX / this.containerChartRef.nativeElement.clientWidth;
+      this.cursor.y = e.offsetY / this.containerChartRef.nativeElement.clientHeight;
     }
   }
 

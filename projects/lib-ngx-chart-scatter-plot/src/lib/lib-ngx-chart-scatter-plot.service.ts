@@ -52,8 +52,8 @@ export class LibNgxChartScatterPlotService {
       const pointA = this.panStartMatTransform.applyInverse(this.panStartCursorScreenPos);
       const pointB = this.panStartMatTransform.applyInverse(new PIXI.Point(e.screenX, e.screenY));
       const diff = new PIXI.Point(
-        -(pointB.x - pointA.x) * this.panStartMatTransformToggleOrigin.a,
-        -(pointB.y - pointA.y) * this.panStartMatTransformToggleOrigin.d
+        -(pointB.x - pointA.x),
+        -(pointB.y - pointA.y)
       );
 
       const result = new PIXI.Rectangle(
@@ -90,18 +90,16 @@ export class LibNgxChartScatterPlotService {
 
     if (!this.isPanning) {
       const rate = 1 - e.deltaY * .001;
-      const matTransformScale = new PIXI.Matrix(rate, 0, 0, rate, 0, 0);
-      const cursorWorldPosBeforeScale = matTransform.applyInverse(cursorPos);
-      const cursorWorldPosAfterScale = matTransformScale.applyInverse(cursorPos);
-      const cameraCornerA = matTransformScale.apply(new PIXI.Point(camera.x, camera.y));
-      const cameraCornerB = matTransformScale.apply(new PIXI.Point(camera.width, camera.height));
-      const result = new PIXI.Rectangle(
-        cameraCornerA.x,
-        cameraCornerA.y,
-        cameraCornerB.x,
-        cameraCornerB.y
+      const amount = new PIXI.Point(
+        (camera.width - camera.x) / rate - (camera.width - camera.x),
+        (camera.height - camera.y) / rate - (camera.height - camera.y)
       );
-      // TODO: adjust to invisible walls bounding box
+      const result = new PIXI.Rectangle(
+        camera.x - (amount.x / 2),
+        camera.y - (amount.y / 2),
+        camera.width + (amount.x / 2),
+        camera.height + (amount.y / 2)
+      );
       return result;
     }
 
