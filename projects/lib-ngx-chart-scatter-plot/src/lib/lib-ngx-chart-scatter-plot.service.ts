@@ -20,12 +20,6 @@ export class LibNgxChartScatterPlotService {
     rect.height += to.y;
   }
 
-  zoom(e: WheelEvent, camera: PIXI.Rectangle) {
-    if (!this.isPanning) {
-      // TODO: implement
-    }
-  }
-
   panStart(e: MouseEvent | TouchEvent, camera: PIXI.Rectangle, matTransform: PIXI.Matrix, matTransformToggleOrigin: PIXI.Matrix) {
     this.isPanning = true;
     this.panStartCamera = camera;
@@ -88,6 +82,30 @@ export class LibNgxChartScatterPlotService {
 
   panEnd() {
     this.isPanning = false;
+  }
+
+  zoom(e: WheelEvent, camera: PIXI.Rectangle) {
+
+    e.preventDefault();
+
+    if (!this.isPanning) {
+      const rate = 1 - e.deltaY * .001;
+      const amount = new PIXI.Point(
+        (camera.width - camera.x) / rate - (camera.width - camera.x),
+        (camera.height - camera.y) / rate - (camera.height - camera.y)
+      );
+
+      const result = new PIXI.Rectangle(
+        camera.x - amount.x / 2,
+        camera.y - amount.y / 2,
+        camera.width + amount.x / 2,
+        camera.height + amount.y / 2
+      );
+
+      return result;
+    }
+
+    return camera;
   }
 
 }
