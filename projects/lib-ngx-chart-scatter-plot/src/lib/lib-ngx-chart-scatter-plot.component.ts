@@ -161,7 +161,7 @@ export class LibNgxChartScatterPlotComponent implements AfterViewInit {
     const cW = this.cameraRect.width - cX;
     const cH = this.cameraRect.height - cY;
 
-    this.matTransform = new PIXI.Matrix().set( // NOTE: mat transform world that coords to screen coords.
+    this.matTransform = new PIXI.Matrix().set( // NOTE: mat transform that world coords to screen coords.
       vW / cW, // NOTE: x scaling
       0,
       0,
