@@ -13,7 +13,9 @@ export class LibNgxChartScatterPlotService {
   private panStartMatTransformToggleOrigin: PIXI.Matrix;
 
   zoom(e: WheelEvent, camera: PIXI.Rectangle) {
-    console.log(e);
+    if (!this.isPanning) {
+      // TODO: implement
+    }
   }
 
   panStart(e: MouseEvent | TouchEvent, camera: PIXI.Rectangle, matTransform: PIXI.Matrix, matTransformToggleOrigin: PIXI.Matrix) {
@@ -38,33 +40,31 @@ export class LibNgxChartScatterPlotService {
     if (this.isPanning) {
       const deltaScreen = new PIXI.Point(0, 0);
       if (e.type === 'pan') {
-        deltaScreen.x = -e.deltaX * this.panStartMatTransformToggleOrigin.a;
-        deltaScreen.y = -e.deltaY * this.panStartMatTransformToggleOrigin.d;
+        deltaScreen.x = e.deltaX;
+        deltaScreen.y = e.deltaY;
       } else if (e.type === 'mousemove') {
-        deltaScreen.x = -(e.screenX - this.panStartCursorScreenPos.x) * this.panStartMatTransformToggleOrigin.a;
-        deltaScreen.y = -(e.screenY - this.panStartCursorScreenPos.y) * this.panStartMatTransformToggleOrigin.d;
+        deltaScreen.x = (e.screenX - this.panStartCursorScreenPos.x);
+        deltaScreen.y = (e.screenY - this.panStartCursorScreenPos.y);
       }
-      const deltaWorld = this.panStartMatTransform.applyInverse(deltaScreen);
 
-      console.log(deltaScreen, deltaWorld, new PIXI.Rectangle(
-        this.panStartCamera.x + deltaWorld.x,
-        this.panStartCamera.y + deltaWorld.y,
-        this.panStartCamera.width + deltaWorld.x,
-        this.panStartCamera.height + deltaWorld.y
-      ));
+      const pointA = this.panStartMatTransform.applyInverse(this.panStartCursorScreenPos);
+      const pointB = this.panStartMatTransform.applyInverse(new PIXI.Point(e.screenX, e.screenY));
+      const diff = new PIXI.Point(
+        -(pointB.x - pointA.x) * this.panStartMatTransformToggleOrigin.a,
+        -(pointB.y - pointA.y) * this.panStartMatTransformToggleOrigin.d
+      );
 
       return new PIXI.Rectangle(
-        this.panStartCamera.x + deltaWorld.x,
-        this.panStartCamera.y + deltaWorld.y,
-        this.panStartCamera.width + deltaWorld.x,
-        this.panStartCamera.height + deltaWorld.y
+        this.panStartCamera.x + diff.x,
+        this.panStartCamera.y + diff.y,
+        this.panStartCamera.width + diff.x,
+        this.panStartCamera.height + diff.y
       );
     }
     return camera;
   }
 
   panEnd() {
-    console.log('--------------------------------------------------');
     this.isPanning = false;
   }
 
