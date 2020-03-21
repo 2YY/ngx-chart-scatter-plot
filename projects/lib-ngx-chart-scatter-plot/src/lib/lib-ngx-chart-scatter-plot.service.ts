@@ -84,7 +84,7 @@ export class LibNgxChartScatterPlotService {
     this.isPanning = false;
   }
 
-  zoom(e: WheelEvent, camera: PIXI.Rectangle, matTransform: PIXI.Matrix, cursorPos: PIXI.Point) {
+  zoom(e: WheelEvent, camera: PIXI.Rectangle, options: LibNgxChartScatterPlotOptions, matTransform: PIXI.Matrix, cursorPos: PIXI.Point) {
 
     e.preventDefault();
 
@@ -100,6 +100,25 @@ export class LibNgxChartScatterPlotService {
         camera.width + (amount.x / 2 * (1 - cursorPos.x)),
         camera.height + (amount.y / 2 * (1 - cursorPos.y))
       );
+      const outOfBoundsAmo = new PIXI.Rectangle(
+        options.invisibleWall.x - result.x,
+        options.invisibleWall.y - result.y,
+        result.width - options.invisibleWall.width,
+        result.height - options.invisibleWall.height
+      );
+      if ((outOfBoundsAmo.x > 0 && outOfBoundsAmo.width > 0) || (outOfBoundsAmo.y > 0 && outOfBoundsAmo.height > 0)) {
+        return options.invisibleWall;
+      }
+      if (outOfBoundsAmo.x > 0 && 0 >= outOfBoundsAmo.width) {
+        LibNgxChartScatterPlotService.moveRelative(new PIXI.Point(outOfBoundsAmo.x, 0), result);
+      } else if (outOfBoundsAmo.width > 0) {
+        LibNgxChartScatterPlotService.moveRelative(new PIXI.Point(-outOfBoundsAmo.width, 0), result);
+      }
+      if (outOfBoundsAmo.y > 0 && 0 >= outOfBoundsAmo.height) {
+        LibNgxChartScatterPlotService.moveRelative(new PIXI.Point(0, outOfBoundsAmo.y), result);
+      } else if (outOfBoundsAmo.height > 0 && 0 >= outOfBoundsAmo.y) {
+        LibNgxChartScatterPlotService.moveRelative(new PIXI.Point(0, -outOfBoundsAmo.height), result);
+      }
       return result;
     }
 
