@@ -18,7 +18,7 @@ export class AppComponent {
   camera = new PIXI.Rectangle(-100, -100, 100, 100);
   options: LibNgxChartScatterPlotOptions = {
     origin: 'leftBottom',
-    invisibleWall: new PIXI.Rectangle(-120, -120, 120, 120)
+    invisibleWall: new PIXI.Rectangle(-110, -110, 110, 110)
   };
 
   constructor(public examplePlotsData: ExamplePlotsDataService, public libNgxChartScatterPlotService: LibNgxChartScatterPlotService) {}

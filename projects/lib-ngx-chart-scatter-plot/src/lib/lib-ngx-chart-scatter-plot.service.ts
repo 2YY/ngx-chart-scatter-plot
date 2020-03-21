@@ -109,7 +109,7 @@ export class LibNgxChartScatterPlotService {
       }
       if (oobAmount.x > 0 && 0 >= oobAmount.width) {
         LibNgxChartScatterPlotService.moveRelative(new PIXI.Point(oobAmount.x, 0), result);
-      } else if (oobAmount.width > 0) {
+      } else if (oobAmount.width > 0 && 0 >= oobAmount.x) {
         LibNgxChartScatterPlotService.moveRelative(new PIXI.Point(-oobAmount.width, 0), result);
       }
       if (oobAmount.y > 0 && 0 >= oobAmount.height) {
