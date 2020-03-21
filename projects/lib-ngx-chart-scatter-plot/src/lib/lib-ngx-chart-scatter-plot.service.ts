@@ -20,6 +20,15 @@ export class LibNgxChartScatterPlotService {
     rect.height += to.y;
   }
 
+  private static getOutOfBoundsAmount(bounds: PIXI.Rectangle, testRect: PIXI.Rectangle) {
+    return new PIXI.Rectangle(
+      bounds.x - testRect.x,
+      bounds.y - testRect.y,
+      testRect.width - bounds.width,
+      testRect.height - bounds.height
+    );
+  }
+
   panStart(e: MouseEvent | TouchEvent, camera: PIXI.Rectangle, matTransform: PIXI.Matrix, matTransformToggleOrigin: PIXI.Matrix) {
     this.isPanning = true;
     this.panStartCamera = camera;
@@ -63,17 +72,11 @@ export class LibNgxChartScatterPlotService {
         this.panStartCamera.height + diff.y
       );
 
-      const outOfBoundsAmo = new PIXI.Rectangle(
-        options.invisibleWall.x - result.x,
-        options.invisibleWall.y - result.y,
-        result.width - options.invisibleWall.width,
-        result.height - options.invisibleWall.height
-      );
-
-      if (outOfBoundsAmo.x > 0) { LibNgxChartScatterPlotService.moveRelative(new PIXI.Point(outOfBoundsAmo.x, 0), result); }
-      if (outOfBoundsAmo.y > 0) { LibNgxChartScatterPlotService.moveRelative(new PIXI.Point(0, outOfBoundsAmo.y), result); }
-      if (outOfBoundsAmo.width > 0) { LibNgxChartScatterPlotService.moveRelative(new PIXI.Point(-outOfBoundsAmo.width, 0), result); }
-      if (outOfBoundsAmo.height > 0) { LibNgxChartScatterPlotService.moveRelative(new PIXI.Point(0, -outOfBoundsAmo.height), result); }
+      const oobAmount = LibNgxChartScatterPlotService.getOutOfBoundsAmount(options.invisibleWall, result);
+      if (oobAmount.x > 0) { LibNgxChartScatterPlotService.moveRelative(new PIXI.Point(oobAmount.x, 0), result); }
+      if (oobAmount.y > 0) { LibNgxChartScatterPlotService.moveRelative(new PIXI.Point(0, oobAmount.y), result); }
+      if (oobAmount.width > 0) { LibNgxChartScatterPlotService.moveRelative(new PIXI.Point(-oobAmount.width, 0), result); }
+      if (oobAmount.height > 0) { LibNgxChartScatterPlotService.moveRelative(new PIXI.Point(0, -oobAmount.height), result); }
 
       return result;
     }
@@ -100,24 +103,19 @@ export class LibNgxChartScatterPlotService {
         camera.width + (amount.x / 2 * (1 - cursorPos.x)),
         camera.height + (amount.y / 2 * (1 - cursorPos.y))
       );
-      const outOfBoundsAmo = new PIXI.Rectangle(
-        options.invisibleWall.x - result.x,
-        options.invisibleWall.y - result.y,
-        result.width - options.invisibleWall.width,
-        result.height - options.invisibleWall.height
-      );
-      if ((outOfBoundsAmo.x > 0 && outOfBoundsAmo.width > 0) || (outOfBoundsAmo.y > 0 && outOfBoundsAmo.height > 0)) {
+      const oobAmount = LibNgxChartScatterPlotService.getOutOfBoundsAmount(options.invisibleWall, result);
+      if ((oobAmount.x > 0 && oobAmount.width > 0) || (oobAmount.y > 0 && oobAmount.height > 0)) {
         return options.invisibleWall;
       }
-      if (outOfBoundsAmo.x > 0 && 0 >= outOfBoundsAmo.width) {
-        LibNgxChartScatterPlotService.moveRelative(new PIXI.Point(outOfBoundsAmo.x, 0), result);
-      } else if (outOfBoundsAmo.width > 0) {
-        LibNgxChartScatterPlotService.moveRelative(new PIXI.Point(-outOfBoundsAmo.width, 0), result);
+      if (oobAmount.x > 0 && 0 >= oobAmount.width) {
+        LibNgxChartScatterPlotService.moveRelative(new PIXI.Point(oobAmount.x, 0), result);
+      } else if (oobAmount.width > 0) {
+        LibNgxChartScatterPlotService.moveRelative(new PIXI.Point(-oobAmount.width, 0), result);
       }
-      if (outOfBoundsAmo.y > 0 && 0 >= outOfBoundsAmo.height) {
-        LibNgxChartScatterPlotService.moveRelative(new PIXI.Point(0, outOfBoundsAmo.y), result);
-      } else if (outOfBoundsAmo.height > 0 && 0 >= outOfBoundsAmo.y) {
-        LibNgxChartScatterPlotService.moveRelative(new PIXI.Point(0, -outOfBoundsAmo.height), result);
+      if (oobAmount.y > 0 && 0 >= oobAmount.height) {
+        LibNgxChartScatterPlotService.moveRelative(new PIXI.Point(0, oobAmount.y), result);
+      } else if (oobAmount.height > 0 && 0 >= oobAmount.y) {
+        LibNgxChartScatterPlotService.moveRelative(new PIXI.Point(0, -oobAmount.height), result);
       }
       return result;
     }
