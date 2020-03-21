@@ -95,10 +95,10 @@ export class LibNgxChartScatterPlotService {
         (camera.height - camera.y) / rate - (camera.height - camera.y)
       );
       const result = new PIXI.Rectangle(
-        camera.x - (amount.x / 2),
-        camera.y - (amount.y / 2),
-        camera.width + (amount.x / 2),
-        camera.height + (amount.y / 2)
+        camera.x - (amount.x / 2 * cursorPos.x),
+        camera.y - (amount.y / 2 * cursorPos.y),
+        camera.width + (amount.x / 2 * (1 - cursorPos.x)),
+        camera.height + (amount.y / 2 * (1 - cursorPos.y))
       );
       return result;
     }

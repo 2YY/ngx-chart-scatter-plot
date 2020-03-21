@@ -194,8 +194,12 @@ export class LibNgxChartScatterPlotComponent implements AfterViewInit {
 
   updateCursor(e: MouseEvent) {
     if (this.containerChartRef.nativeElement) {
-      this.cursor.x = e.offsetX / this.containerChartRef.nativeElement.clientWidth;
-      this.cursor.y = e.offsetY / this.containerChartRef.nativeElement.clientHeight;
+      const rate = new PIXI.Point(
+        e.offsetX / this.containerChartRef.nativeElement.clientWidth,
+        e.offsetY / this.containerChartRef.nativeElement.clientHeight
+      );
+      this.cursor.x = this.matTransformsToggleOrigin[this.optionsRef.origin].a > 0 ? rate.x : 1 - rate.x;
+      this.cursor.y = this.matTransformsToggleOrigin[this.optionsRef.origin].d > 0 ? rate.y : 1 - rate.y;
     }
   }
 
