@@ -17,7 +17,7 @@ export class LibNgxChartScatterPlotComponent implements AfterViewInit {
   @Input() set plots(arr: Plot[]) {
     this.plotDataArr = arr;
 
-    if (this.app && this.cameraRect && this.optionsRef && this.containerChartRef.nativeElement) {
+    if (this.isReadyForDrawing()) {
       this.draw();
     }
   }
@@ -28,16 +28,16 @@ export class LibNgxChartScatterPlotComponent implements AfterViewInit {
    */
   @Input() set camera(rect: PIXI.Rectangle) {
     this.cameraRect = rect;
-
-    if (this.app && this.optionsRef && this.containerChartRef.nativeElement) {
+    if (this.isReadyForDrawing()) {
       this.updateMatTransformArr();
       this.draw();
     }
   }
+
   @Input() set options(o: LibNgxChartScatterPlotOptions) {
     if (!o.origin) { o.origin = 'leftTop'; }
     this.optionsRef = o;
-    if (this.app && this.cameraRect && this.containerChartRef.nativeElement) {
+    if (this.isReadyForDrawing()) {
       this.updateMatTransformArr();
       this.draw();
     }
@@ -91,6 +91,10 @@ export class LibNgxChartScatterPlotComponent implements AfterViewInit {
         this.draw();
       });
     }, 10);
+  }
+
+  private isReadyForDrawing() {
+    return this.app && this.plotDataArr && this.optionsRef && this.cameraRect && this.containerChartRef.nativeElement;
   }
 
   private draw() {
