@@ -73,6 +73,8 @@ export class LibNgxChartScatterPlotComponent implements AfterViewInit {
     rightTop:    new PIXI.Matrix(-1, 0, 0,  1, 0, 0)
   };
 
+  private cursor = new PIXI.Point(.5, .5);
+
   constructor(private zone: NgZone) {}
 
   ngAfterViewInit(): void {
@@ -178,6 +180,17 @@ export class LibNgxChartScatterPlotComponent implements AfterViewInit {
 
   getMatTransformToggleOrigin() {
     return this.matTransformsToggleOrigin[this.optionsRef.origin].clone();
+  }
+
+  getCursorPos() {
+    return this.cursor;
+  }
+
+  updateCursor(e: MouseEvent) {
+    if (this.containerChartRef.nativeElement) {
+      this.cursor.x = e.offsetX / this.containerChartRef.nativeElement.clientWidth;
+      this.cursor.y = e.offsetY / this.containerChartRef.nativeElement.clientHeight;
+    }
   }
 
 }
