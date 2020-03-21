@@ -13,6 +13,13 @@ export class LibNgxChartScatterPlotService {
   private panStartMatTransform: PIXI.Matrix;
   private panStartMatTransformToggleOrigin: PIXI.Matrix;
 
+  private static moveRelative(to: PIXI.Point, rect: PIXI.Rectangle) {
+    rect.x += to.x;
+    rect.y += to.y;
+    rect.width += to.x;
+    rect.height += to.y;
+  }
+
   zoom(e: WheelEvent, camera: PIXI.Rectangle) {
     if (!this.isPanning) {
       // TODO: implement
@@ -62,17 +69,17 @@ export class LibNgxChartScatterPlotService {
         this.panStartCamera.height + diff.y
       );
 
-      const outOfBoundsAmount = new PIXI.Rectangle(
+      const outOfBoundsAmo = new PIXI.Rectangle(
         options.invisibleWall.x - result.x,
         options.invisibleWall.y - result.y,
         result.width - options.invisibleWall.width,
         result.height - options.invisibleWall.height
       );
 
-      if (outOfBoundsAmount.x > 0) { this.moveRelative(new PIXI.Point(outOfBoundsAmount.x, 0), result); }
-      if (outOfBoundsAmount.y > 0) { this.moveRelative(new PIXI.Point(0, outOfBoundsAmount.y), result); }
-      if (outOfBoundsAmount.width > 0) { this.moveRelative(new PIXI.Point(-outOfBoundsAmount.width, 0), result); }
-      if (outOfBoundsAmount.height > 0) { this.moveRelative(new PIXI.Point(0, -outOfBoundsAmount.height), result); }
+      if (outOfBoundsAmo.x > 0) { LibNgxChartScatterPlotService.moveRelative(new PIXI.Point(outOfBoundsAmo.x, 0), result); }
+      if (outOfBoundsAmo.y > 0) { LibNgxChartScatterPlotService.moveRelative(new PIXI.Point(0, outOfBoundsAmo.y), result); }
+      if (outOfBoundsAmo.width > 0) { LibNgxChartScatterPlotService.moveRelative(new PIXI.Point(-outOfBoundsAmo.width, 0), result); }
+      if (outOfBoundsAmo.height > 0) { LibNgxChartScatterPlotService.moveRelative(new PIXI.Point(0, -outOfBoundsAmo.height), result); }
 
       return result;
     }
@@ -81,13 +88,6 @@ export class LibNgxChartScatterPlotService {
 
   panEnd() {
     this.isPanning = false;
-  }
-
-  private moveRelative(to: PIXI.Point, rect: PIXI.Rectangle) {
-    rect.x += to.x;
-    rect.y += to.y;
-    rect.width += to.x;
-    rect.height += to.y;
   }
 
 }
