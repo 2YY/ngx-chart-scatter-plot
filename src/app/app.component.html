@@ -12,8 +12,9 @@
 				chartScatterPlotRef.getMatTransformToggleOrigin()
 			)
 		"
-		(mousemove)="camera = libNgxChartScatterPlotService.panMove($event, camera)"
+		(mousemove)="camera = libNgxChartScatterPlotService.panMove($event, camera, options)"
 		(mouseup)="libNgxChartScatterPlotService.panEnd()"
+		(mouseleave)="libNgxChartScatterPlotService.panEnd()"
 		(wheel)="libNgxChartScatterPlotService.zoom($event, camera)"
 	></lib-ngx-chart-scatter-plot>
 </div>

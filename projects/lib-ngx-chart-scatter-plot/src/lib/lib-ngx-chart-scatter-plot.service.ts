@@ -1,5 +1,6 @@
 import * as PIXI from './pixi.js';
 import { Injectable } from '@angular/core';
+import {LibNgxChartScatterPlotOptions} from './lib-ngx-chart-scatter-plot-options';
 
 @Injectable({
   providedIn: 'root'
@@ -36,7 +37,7 @@ export class LibNgxChartScatterPlotService {
     }
   }
 
-  panMove(e: any, camera: PIXI.Rectangle) {
+  panMove(e: any, camera: PIXI.Rectangle, options: LibNgxChartScatterPlotOptions) {
     if (this.isPanning) {
       const deltaScreen = new PIXI.Point(0, 0);
       if (e.type === 'pan') {
@@ -54,18 +55,39 @@ export class LibNgxChartScatterPlotService {
         -(pointB.y - pointA.y) * this.panStartMatTransformToggleOrigin.d
       );
 
-      return new PIXI.Rectangle(
+      const result = new PIXI.Rectangle(
         this.panStartCamera.x + diff.x,
         this.panStartCamera.y + diff.y,
         this.panStartCamera.width + diff.x,
         this.panStartCamera.height + diff.y
       );
+
+      const outOfBoundsAmount = new PIXI.Rectangle(
+        options.invisibleWall.x - result.x,
+        options.invisibleWall.y - result.y,
+        result.width - options.invisibleWall.width,
+        result.height - options.invisibleWall.height
+      );
+
+      if (outOfBoundsAmount.x > 0) { this.moveRelative(new PIXI.Point(outOfBoundsAmount.x, 0), result); }
+      if (outOfBoundsAmount.y > 0) { this.moveRelative(new PIXI.Point(0, outOfBoundsAmount.y), result); }
+      if (outOfBoundsAmount.width > 0) { this.moveRelative(new PIXI.Point(-outOfBoundsAmount.width, 0), result); }
+      if (outOfBoundsAmount.height > 0) { this.moveRelative(new PIXI.Point(0, -outOfBoundsAmount.height), result); }
+
+      return result;
     }
     return camera;
   }
 
   panEnd() {
     this.isPanning = false;
+  }
+
+  private moveRelative(to: PIXI.Point, rect: PIXI.Rectangle) {
+    rect.x += to.x;
+    rect.y += to.y;
+    rect.width += to.x;
+    rect.height += to.y;
   }
 
 }
