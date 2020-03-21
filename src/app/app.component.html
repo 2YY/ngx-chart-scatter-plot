@@ -1,3 +1,19 @@
 <div class="chart">
-	<lib-ngx-chart-scatter-plot [plots]="plots" [camera]="camera"></lib-ngx-chart-scatter-plot>
+	<lib-ngx-chart-scatter-plot
+		#chartScatterPlot
+		[plots]="plots"
+		[camera]="camera"
+		[options]="options"
+		(mousedown)="
+			libNgxChartScatterPlotService.panStart(
+				$event,
+				camera,
+				chartScatterPlotRef.getMatTransform(),
+				chartScatterPlotRef.getMatTransformToggleOrigin()
+			)
+		"
+		(mousemove)="camera = libNgxChartScatterPlotService.panMove($event, camera)"
+		(mouseup)="libNgxChartScatterPlotService.panEnd()"
+		(wheel)="libNgxChartScatterPlotService.zoom($event, camera)"
+	></lib-ngx-chart-scatter-plot>
 </div>

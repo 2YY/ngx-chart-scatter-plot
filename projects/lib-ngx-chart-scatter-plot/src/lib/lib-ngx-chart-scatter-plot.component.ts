@@ -1,6 +1,7 @@
 import {AfterViewInit, ChangeDetectionStrategy, Component, ElementRef, EventEmitter, Input, NgZone, Output, ViewChild} from '@angular/core';
 import * as PIXI from './pixi.js';
 import {Plot} from './plot';
+import {LibNgxChartScatterPlotOptions} from './lib-ngx-chart-scatter-plot-options';
 
 @Component({
   selector: 'lib-ngx-chart-scatter-plot',
@@ -16,7 +17,7 @@ export class LibNgxChartScatterPlotComponent implements AfterViewInit {
   @Input() set plots(arr: Plot[]) {
     this.plotDataArr = arr;
 
-    if (this.app && this.cameraRect && this.containerChartRef.nativeElement) {
+    if (this.app && this.cameraRect && this.optionsRef && this.containerChartRef.nativeElement) {
       this.draw();
     }
   }
@@ -28,7 +29,15 @@ export class LibNgxChartScatterPlotComponent implements AfterViewInit {
   @Input() set camera(rect: PIXI.Rectangle) {
     this.cameraRect = rect;
 
-    if (this.app && this.containerChartRef.nativeElement) {
+    if (this.app && this.optionsRef && this.containerChartRef.nativeElement) {
+      this.updateMatTransformArr();
+      this.draw();
+    }
+  }
+  @Input() set options(o: LibNgxChartScatterPlotOptions) {
+    if (!o.origin) { o.origin = 'leftTop'; }
+    this.optionsRef = o;
+    if (this.app && this.cameraRect && this.containerChartRef.nativeElement) {
       this.updateMatTransformArr();
       this.draw();
     }
@@ -48,14 +57,21 @@ export class LibNgxChartScatterPlotComponent implements AfterViewInit {
   @Output() touchendPlot = new EventEmitter<Plot>();
   @Output() touchendoutsidePlot = new EventEmitter<Plot>();
 
+  private optionsRef: LibNgxChartScatterPlotOptions;
+
   private app: PIXI.Application;
   private cameraRect: PIXI.Rectangle;
 
   private plotDisplayObjectArr: PIXI.DisplayObject[] = [];
   private plotDataArr: Plot[];
 
-  private matTransformArrWorldToScreen: PIXI.Matrix[] = []; // NOTE: only update from updateMatTransformArr()
-  private matTransformArrScreenToWorld: PIXI.Matrix[] = []; // NOTE: only update from updateMatTransformArr()
+  private matTransform: PIXI.Matrix;
+  private matTransformsToggleOrigin = {
+    leftTop:     new PIXI.Matrix(1, 0, 0, 1, 0, 0),
+    leftBottom:  new PIXI.Matrix(1,  0, 0, -1, 0, 0),
+    rightBottom: new PIXI.Matrix(-1, 0, 0, -1, 0, 0),
+    rightTop:    new PIXI.Matrix(-1, 0, 0,  1, 0, 0)
+  };
 
   constructor(private zone: NgZone) {}
 
@@ -84,8 +100,7 @@ export class LibNgxChartScatterPlotComponent implements AfterViewInit {
 
     // Add all Plots to chart
     this.plotDataArr.forEach(plot => {
-      console.log(plot.position, '=>', this.transformWorldToScreen(plot.position));
-      const p = this.transformWorldToScreen(plot.position);
+      const p = this.matTransform.apply(plot.position);
       const isPlotInTheCameraBounds = (() => {
         let w: number;
         let h: number;
@@ -132,14 +147,6 @@ export class LibNgxChartScatterPlotComponent implements AfterViewInit {
     });
   }
 
-  private transformWorldToScreen(p: PIXI.Point): PIXI.Point {
-    return this.matTransformArrWorldToScreen.reduce((acc, mat) => mat.apply(acc), p);
-  }
-
-  private transformScreenToWorld(p: PIXI.Point): PIXI.Point {
-    return this.matTransformArrScreenToWorld.reduce((acc, mat) => mat.applyInverse(acc), p);
-  }
-
   private updateMatTransformArr() {
     const vW = this.containerChartRef.nativeElement.clientWidth;
     const vH = this.containerChartRef.nativeElement.clientHeight;
@@ -148,21 +155,25 @@ export class LibNgxChartScatterPlotComponent implements AfterViewInit {
     const cW = this.cameraRect.width - cX;
     const cH = this.cameraRect.height - cY;
 
-    const matTransformWorldToScreen = new PIXI.Matrix().set(
-      vW / cW,
+    this.matTransform = new PIXI.Matrix().set( // NOTE: mat transform world that coords to screen coords.
+      vW / cW, // NOTE: x scaling
       0,
       0,
-      vH / cH,
-      -cX * (vW / cW),
-      -cY * (vH / cH)
+      vH / cH, // NOTE: y scaling
+      -cX * (vW / cW), // NOTE: x panning
+      -cY * (vH / cH) // NOTE: y panning
     );
+    if (this.optionsRef.origin !== 'leftTop') {
+      this.matTransform.append(this.matTransformsToggleOrigin[this.optionsRef.origin]);
+    }
+  }
 
-    this.matTransformArrWorldToScreen = [
-      matTransformWorldToScreen
-    ];
-    this.matTransformArrScreenToWorld = [
-      matTransformWorldToScreen
-    ];
+  getMatTransform() {
+    return this.matTransform.clone();
+  }
+
+  getMatTransformToggleOrigin() {
+    return this.matTransformsToggleOrigin[this.optionsRef.origin];
   }
 
 }
