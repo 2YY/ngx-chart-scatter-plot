@@ -173,7 +173,7 @@ export class LibNgxChartScatterPlotComponent implements AfterViewInit {
   }
 
   getMatTransformToggleOrigin() {
-    return this.matTransformsToggleOrigin[this.optionsRef.origin];
+    return this.matTransformsToggleOrigin[this.optionsRef.origin].clone();
   }
 
 }
