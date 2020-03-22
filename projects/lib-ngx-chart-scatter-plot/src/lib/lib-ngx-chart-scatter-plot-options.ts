@@ -7,4 +7,9 @@ export interface LibNgxChartScatterPlotOptions {
    * Camera can project only in this bounds.
    */
   invisibleWall: PIXI.Rectangle;
+
+  /**
+   * Margin outside of bounds invisibleWall.
+   */
+  invisibleWallMargin: number;
 }

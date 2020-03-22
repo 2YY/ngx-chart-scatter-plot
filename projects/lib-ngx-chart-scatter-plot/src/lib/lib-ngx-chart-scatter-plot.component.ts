@@ -154,8 +154,8 @@ export class LibNgxChartScatterPlotComponent implements AfterViewInit {
   }
 
   private updateMatTransformArr() {
-    const vW = this.containerChartRef.nativeElement.clientWidth;
-    const vH = this.containerChartRef.nativeElement.clientHeight;
+    const vW = this.containerChartRef.nativeElement.clientWidth - this.optionsRef.invisibleWallMargin * 2;
+    const vH = this.containerChartRef.nativeElement.clientHeight - this.optionsRef.invisibleWallMargin * 2;
     const cX = this.cameraRect.x;
     const cY = this.cameraRect.y;
     const cW = this.cameraRect.width - cX;
@@ -177,6 +177,15 @@ export class LibNgxChartScatterPlotComponent implements AfterViewInit {
       this.matTransformsToggleOrigin[this.optionsRef.origin].d,
       this.matTransformsToggleOrigin[this.optionsRef.origin].tx * this.containerChartRef.nativeElement.clientWidth,
       this.matTransformsToggleOrigin[this.optionsRef.origin].ty * this.containerChartRef.nativeElement.clientHeight
+    ));
+
+    this.matTransform.prepend(new PIXI.Matrix().set(
+      1,
+      0,
+      0,
+      1,
+      this.optionsRef.invisibleWallMargin * this.matTransformsToggleOrigin[this.optionsRef.origin].a,
+      this.optionsRef.invisibleWallMargin * this.matTransformsToggleOrigin[this.optionsRef.origin].d
     ));
   }
 

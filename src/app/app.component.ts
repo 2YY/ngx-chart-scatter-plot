@@ -1,5 +1,5 @@
 import {ChangeDetectorRef, Component, ViewChild} from '@angular/core';
-import { ExamplePlotsDataService } from './example-plots-data.service';
+import {ExamplePlotsDataService} from './example-plots-data.service';
 import * as PIXI from '../../projects/lib-ngx-chart-scatter-plot/src/lib/pixi.js';
 import {LibNgxChartScatterPlotService} from '../../projects/lib-ngx-chart-scatter-plot/src/lib/lib-ngx-chart-scatter-plot.service';
 import {LibNgxChartScatterPlotOptions} from '../../projects/lib-ngx-chart-scatter-plot/src/lib/lib-ngx-chart-scatter-plot-options';
@@ -18,9 +18,11 @@ export class AppComponent {
   camera = new PIXI.Rectangle(-100, -100, 100, 100);
   options: LibNgxChartScatterPlotOptions = {
     origin: 'leftBottom',
-    invisibleWall: new PIXI.Rectangle(-110, -110, 110, 110)
+    invisibleWall: new PIXI.Rectangle(-100, -100, 100, 100),
+    invisibleWallMargin: 20
   };
 
-  constructor(public examplePlotsData: ExamplePlotsDataService, public libNgxChartScatterPlotService: LibNgxChartScatterPlotService) {}
+  constructor(public examplePlotsData: ExamplePlotsDataService, public libNgxChartScatterPlotService: LibNgxChartScatterPlotService) {
+  }
 
 }
