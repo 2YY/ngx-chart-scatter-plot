@@ -77,7 +77,7 @@ export class NgxChartScatterPlotComponent implements AfterViewInit {
       this.cameraRectDefault = rect.clone();
     }
     if (this.isReadyForDrawing()) {
-      this.updateMatTransformArr();
+      this.updateMatTransform();
       this.draw();
     }
   }
@@ -88,7 +88,7 @@ export class NgxChartScatterPlotComponent implements AfterViewInit {
     }
     this.optionsRef = o;
     if (this.isReadyForDrawing()) {
-      this.updateMatTransformArr();
+      this.updateMatTransform();
       this.draw();
     }
   }
@@ -105,7 +105,7 @@ export class NgxChartScatterPlotComponent implements AfterViewInit {
         this.app.view.style['max-width'] = '100%';
         this.app.view.style['max-height'] = '100%';
         this.containerChartRef.nativeElement.appendChild(this.app.view);
-        this.updateMatTransformArr();
+        this.updateMatTransform();
         this.draw();
       });
     }, 10);
@@ -232,7 +232,7 @@ export class NgxChartScatterPlotComponent implements AfterViewInit {
     this.changeDetectorRef.detectChanges();
   }
 
-  private updateMatTransformArr() {
+  private updateMatTransform() {
     const vW = this.containerChartRef.nativeElement.clientWidth - this.optionsRef.invisibleWallMargin * 2;
     const vH = this.containerChartRef.nativeElement.clientHeight - this.optionsRef.invisibleWallMargin * 2;
     const cX = this.cameraRect.x;
