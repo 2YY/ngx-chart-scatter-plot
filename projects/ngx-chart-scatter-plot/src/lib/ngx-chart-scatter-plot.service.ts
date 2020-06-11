@@ -105,12 +105,15 @@ export class NgxChartScatterPlotService {
         (camera.width - camera.x) / rate - (camera.width - camera.x),
         (camera.height - camera.y) / rate - (camera.height - camera.y)
       );
-      const result = new PIXI.Rectangle(
+      let result = new PIXI.Rectangle(
         camera.x - (amount.x / 2 * cursorPos.x),
         camera.y - (amount.y / 2 * cursorPos.y),
         camera.width + (amount.x / 2 * (1 - cursorPos.x)),
         camera.height + (amount.y / 2 * (1 - cursorPos.y))
       );
+      if (result.x > result.width || result.y > result.height) { // Note: reset camera to zero position if scale negated
+        result = options.invisibleWall.clone();
+      }
       const oobAmount = NgxChartScatterPlotService.getOutOfBoundsAmount(options.invisibleWall, result);
       if ((oobAmount.x > 0 && oobAmount.width > 0) || (oobAmount.y > 0 && oobAmount.height > 0)) {
         return options.invisibleWall;
