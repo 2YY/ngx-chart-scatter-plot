@@ -34,10 +34,13 @@ jobs:
       run: npm run test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
 
     - name: Build
-      run: npm run build
+      run: npm run build-storybook
+
+    - name: Add .nojekyll file to GitHub Pages deployment
+      run: touch storybook-static/.nojekyll
 
     - name: Deploy
       uses: peaceiris/actions-gh-pages@v3
       with:
         deploy_key: ${{ secrets.ACTIONS_DEPLOY_KEY }}
-        publish_dir: ./dist
+        publish_dir: ./storybook-static
