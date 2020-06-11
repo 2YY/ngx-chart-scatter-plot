@@ -1,0 +1,9 @@
+<div class="chart">
+  <div #containerChart (mousemove)="updateCursor($event)" class="chart__container"></div>
+  <div class="chart__ticks">
+    <div *ngFor="let item of ticks; trackBy: trackByIndex">
+      <div [style.top]="item.y + 'px'" class="tick horizontal"></div>
+      <div [style.left]="item.x + 'px'" class="tick vertical"></div>
+    </div>
+  </div>
+</div>
