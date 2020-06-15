@@ -10,6 +10,8 @@ export default {
   title: 'ChartScatterPlot',
 };
 
+////////////////////////////////////////////////////////////////////////////////////////////////////
+
 @Component({
   selector: 'lib-basic-usage',
   template: `
@@ -86,7 +88,6 @@ class ExampleComponent {
     origin: 'leftBottom',
     invisibleWall: new PIXI.Rectangle(-100, -100, 100, 100),
     invisibleWallMargin: 20,
-    // invisibleWallMargin: 0,
     tickResolution: 4
   };
 
@@ -121,6 +122,8 @@ class ExampleComponent {
 })
 class ExampleModule {
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const BasicUsage = () => ({
   component: ExampleComponent,

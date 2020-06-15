@@ -134,4 +134,23 @@ export class NgxChartScatterPlotService {
     return camera;
   }
 
+  getMortonNumber(canvasSize: PIXI.Point, point: PIXI.Point) {
+    const mortonCoords = new PIXI.Point(
+      Math.min(Math.floor(point.x / (canvasSize.x / 8)), 7),
+      Math.min(Math.floor(point.y / (canvasSize.y / 8)), 7)
+    );
+
+    const pad = (num: number) => {
+      let arr = num.toString(2).split('');
+      arr = arr.reverse();
+      arr = arr.map(v => '0' + v);
+      arr = arr.reverse();
+      return parseInt(arr.join('').padStart(6, '0'), 2);
+    };
+
+    /* tslint:disable:no-bitwise */
+    return pad(mortonCoords.x) | (pad(mortonCoords.y) << 1);
+    /* tslint:enable:no-bitwise */
+  }
+
 }
