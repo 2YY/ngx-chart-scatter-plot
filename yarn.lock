@@ -1333,17 +1333,6 @@
     "@pixi/sprite" "5.2.4"
     "@pixi/utils" "5.2.4"
 
-"@pixi/interaction@^5.2.4":
-  version "5.2.4"
-  resolved "https://registry.yarnpkg.com/@pixi/interaction/-/interaction-5.2.4.tgz#5d8f64b9c90a8fe6ce0edefb3d522f12d0ce7829"
-  integrity sha512-c6EzDRcCFmixpRuwY4xIr9I0ppxmkp8b8mP3qSwvMkY5vsMXazhshhtw0SwTA5mdG6vGV93DnZIevFr+qLvA/Q==
-  dependencies:
-    "@pixi/core" "5.2.4"
-    "@pixi/display" "5.2.4"
-    "@pixi/math" "5.2.4"
-    "@pixi/ticker" "5.2.4"
-    "@pixi/utils" "5.2.4"
-
 "@pixi/math@5.2.4", "@pixi/math@^5.2.4":
   version "5.2.4"
   resolved "https://registry.yarnpkg.com/@pixi/math/-/math-5.2.4.tgz#159d6b15a35eebceb1c51ff8ce1f6fcf10cfdbe5"

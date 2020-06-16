@@ -13,6 +13,7 @@ import {
 import * as PIXI from './pixi.js';
 import {Plot} from './plot';
 import {ChartOptions} from './chart-options';
+import {NgxChartScatterPlotService} from './ngx-chart-scatter-plot.service';
 
 
 @Component({
@@ -24,20 +25,16 @@ import {ChartOptions} from './chart-options';
 export class NgxChartScatterPlotComponent implements AfterViewInit {
 
   @ViewChild('containerChart') containerChartRef: ElementRef;
+
   @Output() pointerdownPlot = new EventEmitter<Plot>();
   @Output() pointerupPlot = new EventEmitter<Plot>();
   @Output() pointerupoutsidePlot = new EventEmitter<Plot>();
   @Output() pointeroverPlot = new EventEmitter<Plot>();
   @Output() pointeroutPlot = new EventEmitter<Plot>();
-  @Output() mousedownPlot = new EventEmitter<Plot>();
-  @Output() mouseupPlot = new EventEmitter<Plot>();
-  @Output() mouseupoutsidePlot = new EventEmitter<Plot>();
-  @Output() mouseoverPlot = new EventEmitter<Plot>();
-  @Output() mouseoutPlot = new EventEmitter<Plot>();
-  @Output() touchstartPlot = new EventEmitter<Plot>();
-  @Output() touchendPlot = new EventEmitter<Plot>();
-  @Output() touchendoutsidePlot = new EventEmitter<Plot>();
+
   ticks: PIXI.Point[] = [];
+  isPointerOverlappingAnyPlot = false;
+
   private optionsRef: ChartOptions;
   private app: PIXI.Application;
   private cameraRect: PIXI.Rectangle;
@@ -52,8 +49,13 @@ export class NgxChartScatterPlotComponent implements AfterViewInit {
     rightTop: new PIXI.Matrix(-1, 0, 0, 1, 1, 0)
   };
   private cursor = new PIXI.Point(.5, .5);
+  private hoge = 'fuga';
 
-  constructor(private zone: NgZone, private changeDetectorRef: ChangeDetectorRef) {
+  constructor(
+    private zone: NgZone,
+    private changeDetectorRef: ChangeDetectorRef,
+    private chartScatterPlotService: NgxChartScatterPlotService
+  ) {
   }
 
   /**
@@ -144,8 +146,46 @@ export class NgxChartScatterPlotComponent implements AfterViewInit {
     }
   }
 
+  updateCollision(e: MouseEvent) {
+    let isHit = false;
+    const canvasSize = new PIXI.Point(this.containerChartRef.nativeElement.clientWidth, this.containerChartRef.nativeElement.clientHeight);
+    const cursorPos = new PIXI.Point(e.offsetX, e.offsetY);
+    const mortonNumber = this.chartScatterPlotService.getMortonNumber(canvasSize, cursorPos);
+    const sameMortonNumberPlots = this.plotDataArr
+      .filter(v => this.isInScreenPlot(v))
+      .map(v => ({r: v.r, position: this.matTransform.apply(v.position)}))
+      .filter(v => mortonNumber === this.chartScatterPlotService.getMortonNumber(canvasSize, v.position));
+    sameMortonNumberPlots.reverse();
+    sameMortonNumberPlots.forEach((v, i) => {
+      if (!isHit && v.r >= Math.sqrt(Math.pow(cursorPos.x - v.position.x, 2) + Math.pow(cursorPos.y - v.position.y, 2))) {
+        isHit = true;
+        this.isPointerOverlappingAnyPlot = true;
+      }
+    });
+    if (!isHit) {
+      this.isPointerOverlappingAnyPlot = false;
+    }
+  }
+
   trackByIndex(i: number) {
     return i;
+  }
+
+  private isInScreenPlot(plot: Plot) {
+    const p = this.matTransform.apply(plot.position);
+    let w: number;
+    let h: number;
+    if (plot.sprite) {
+      w = plot.sprite.width;
+      h = plot.sprite.height;
+    } else {
+      w = plot.r * 2;
+      h = plot.r * 2;
+    }
+    return p.x > -w / 2
+      && this.containerChartRef.nativeElement.clientWidth + w / 2 > p.x
+      && p.y > -h / 2
+      && this.containerChartRef.nativeElement.clientHeight + h / 2 > p.y;
   }
 
   private isReadyForDrawing() {
@@ -160,21 +200,7 @@ export class NgxChartScatterPlotComponent implements AfterViewInit {
     // Add all Plots to chart
     this.plotDataArr.forEach(plot => {
       const p = this.matTransform.apply(plot.position);
-      const isPlotInTheCameraBounds = (() => {
-        let w: number;
-        let h: number;
-        if (plot.sprite) {
-          w = plot.sprite.width;
-          h = plot.sprite.height;
-        } else {
-          w = plot.r * 2;
-          h = plot.r * 2;
-        }
-        return p.x > -w / 2
-          && this.containerChartRef.nativeElement.clientWidth + w / 2 > p.x
-          && p.y > -h / 2
-          && this.containerChartRef.nativeElement.clientHeight + h / 2 > p.y;
-      })();
+      const isPlotInTheCameraBounds = this.isInScreenPlot(plot);
       if (isPlotInTheCameraBounds) {
         if (plot.sprite) {
           // TODO: implement
@@ -186,19 +212,6 @@ export class NgxChartScatterPlotComponent implements AfterViewInit {
           g.endFill();
           g.interactive = true;
           g.buttonMode = true;
-          g.on('pointerdown', () => this.pointerdownPlot.emit(plot));
-          g.on('pointerup', () => this.pointerupPlot.emit(plot));
-          g.on('pointerupoutside', () => this.pointerupoutsidePlot.emit(plot));
-          g.on('pointerover', () => this.pointeroverPlot.emit(plot));
-          g.on('pointerout', () => this.pointeroutPlot.emit(plot));
-          g.on('mousedown', () => this.mousedownPlot.emit(plot));
-          g.on('mouseup', () => this.mouseupPlot.emit(plot));
-          g.on('mouseupoutside', () => this.mouseupoutsidePlot.emit(plot));
-          g.on('mouseover', () => this.mouseoverPlot.emit(plot));
-          g.on('mouseout', () => this.mouseoutPlot.emit(plot));
-          g.on('touchstart', () => this.touchstartPlot.emit(plot));
-          g.on('touchend', () => this.touchendPlot.emit(plot));
-          g.on('touchendoutside', () => this.touchendoutsidePlot.emit(plot));
           this.app.stage.addChild(g);
           this.plotDisplayObjectArr.push(g);
         }
