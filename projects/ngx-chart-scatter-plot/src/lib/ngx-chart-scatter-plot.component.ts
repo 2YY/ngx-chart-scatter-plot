@@ -49,7 +49,6 @@ export class NgxChartScatterPlotComponent implements AfterViewInit {
     rightTop: new PIXI.Matrix(-1, 0, 0, 1, 1, 0)
   };
   private cursor = new PIXI.Point(.5, .5);
-  private hoge = 'fuga';
 
   constructor(
     private zone: NgZone,
