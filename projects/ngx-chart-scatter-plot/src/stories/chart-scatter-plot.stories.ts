@@ -5,6 +5,7 @@ import {NgxChartScatterPlotComponent} from '../lib/ngx-chart-scatter-plot.compon
 import * as PIXI from '../lib/pixi.js';
 import {ChartOptions} from '../lib/chart-options';
 import {Plot} from '../lib/plot';
+import {v4 as uuid} from 'uuid';
 
 export default {
   title: 'ChartScatterPlot',
@@ -65,23 +66,23 @@ class ExampleComponent {
   //   return v;
   // });
   plots = [
-    {position: new PIXI.Point(0, 0), r: 5, color: 0x000000, alpha: .618046972},
-    {position: new PIXI.Point(-12.5, 5), r: 5, color: 0x000000, alpha: .618046972},
-    {position: new PIXI.Point(-25, 0), r: 5, color: 0x000000, alpha: .618046972},
-    {position: new PIXI.Point(-37.5, 5), r: 5, color: 0x000000, alpha: .618046972},
-    {position: new PIXI.Point(-50, 0), r: 5, color: 0x000000, alpha: .618046972},
-    {position: new PIXI.Point(-62.5, 5), r: 5, color: 0x000000, alpha: .618046972},
-    {position: new PIXI.Point(-75, 0), r: 5, color: 0x000000, alpha: .618046972},
-    {position: new PIXI.Point(-87.5, 5), r: 5, color: 0x000000, alpha: .618046972},
-    {position: new PIXI.Point(-100, 0), r: 5, color: 0x000000, alpha: .618046972},
-    {position: new PIXI.Point(12.5, 5), r: 5, color: 0x000000, alpha: .618046972},
-    {position: new PIXI.Point(25, 0), r: 5, color: 0x000000, alpha: .618046972},
-    {position: new PIXI.Point(37.5, 5), r: 5, color: 0x000000, alpha: .618046972},
-    {position: new PIXI.Point(50, 0), r: 5, color: 0x000000, alpha: .618046972},
-    {position: new PIXI.Point(62.5, 5), r: 5, color: 0x000000, alpha: .618046972},
-    {position: new PIXI.Point(75, 0), r: 5, color: 0x000000, alpha: .618046972},
-    {position: new PIXI.Point(87.5, 5), r: 5, color: 0x000000, alpha: .618046972},
-    {position: new PIXI.Point(100, 0), r: 5, color: 0x000000, alpha: .618046972},
+    {id: uuid(), position: new PIXI.Point(0, 0), r: 5, color: 0x000000, alpha: .618046972},
+    {id: uuid(), position: new PIXI.Point(-12.5, 5), r: 5, color: 0x000000, alpha: .618046972},
+    {id: uuid(), position: new PIXI.Point(-25, 0), r: 5, color: 0x000000, alpha: .618046972},
+    {id: uuid(), position: new PIXI.Point(-37.5, 5), r: 5, color: 0x000000, alpha: .618046972},
+    {id: uuid(), position: new PIXI.Point(-50, 0), r: 5, color: 0x000000, alpha: .618046972},
+    {id: uuid(), position: new PIXI.Point(-62.5, 5), r: 5, color: 0x000000, alpha: .618046972},
+    {id: uuid(), position: new PIXI.Point(-75, 0), r: 5, color: 0x000000, alpha: .618046972},
+    {id: uuid(), position: new PIXI.Point(-87.5, 5), r: 5, color: 0x000000, alpha: .618046972},
+    {id: uuid(), position: new PIXI.Point(-100, 0), r: 5, color: 0x000000, alpha: .618046972},
+    {id: uuid(), position: new PIXI.Point(12.5, 5), r: 5, color: 0x000000, alpha: .618046972},
+    {id: uuid(), position: new PIXI.Point(25, 0), r: 5, color: 0x000000, alpha: .618046972},
+    {id: uuid(), position: new PIXI.Point(37.5, 5), r: 5, color: 0x000000, alpha: .618046972},
+    {id: uuid(), position: new PIXI.Point(50, 0), r: 5, color: 0x000000, alpha: .618046972},
+    {id: uuid(), position: new PIXI.Point(62.5, 5), r: 5, color: 0x000000, alpha: .618046972},
+    {id: uuid(), position: new PIXI.Point(75, 0), r: 5, color: 0x000000, alpha: .618046972},
+    {id: uuid(), position: new PIXI.Point(87.5, 5), r: 5, color: 0x000000, alpha: .618046972},
+    {id: uuid(), position: new PIXI.Point(100, 0), r: 5, color: 0x000000, alpha: .618046972},
   ];
   camera = new PIXI.Rectangle(-100, -100, 100, 100);
   options: ChartOptions = {

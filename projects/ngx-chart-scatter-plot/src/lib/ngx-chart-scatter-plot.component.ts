@@ -33,7 +33,7 @@ export class NgxChartScatterPlotComponent implements AfterViewInit {
   @Output() pointeroutPlot = new EventEmitter<Plot>();
 
   ticks: PIXI.Point[] = [];
-  isPointerOverlappingAnyPlot = false;
+  pointerOverlappingPlotId: string | null = null;
 
   private optionsRef: ChartOptions;
   private app: PIXI.Application;
@@ -152,17 +152,17 @@ export class NgxChartScatterPlotComponent implements AfterViewInit {
     const mortonNumber = this.chartScatterPlotService.getMortonNumber(canvasSize, cursorPos);
     const sameMortonNumberPlots = this.plotDataArr
       .filter(v => this.isInScreenPlot(v))
-      .map(v => ({r: v.r, position: this.matTransform.apply(v.position)}))
+      .map(v => ({id: v.id, r: v.r, position: this.matTransform.apply(v.position)}))
       .filter(v => mortonNumber === this.chartScatterPlotService.getMortonNumber(canvasSize, v.position));
     sameMortonNumberPlots.reverse();
     sameMortonNumberPlots.forEach((v, i) => {
       if (!isHit && v.r >= Math.sqrt(Math.pow(cursorPos.x - v.position.x, 2) + Math.pow(cursorPos.y - v.position.y, 2))) {
         isHit = true;
-        this.isPointerOverlappingAnyPlot = true;
+        this.pointerOverlappingPlotId = v.id;
       }
     });
     if (!isHit) {
-      this.isPointerOverlappingAnyPlot = false;
+      this.pointerOverlappingPlotId = null;
     }
   }
 

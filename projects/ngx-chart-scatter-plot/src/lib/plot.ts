@@ -1,6 +1,9 @@
 import * as PIXI from './pixi';
 
 export interface Plot {
+  /** unique id */
+  id: string;
+
   /**
    * Plot position.
    */

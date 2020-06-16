@@ -1,5 +1,5 @@
 <div class="chart">
-  <div #containerChart (mousemove)="updateCursor($event); updateCollision($event);" [style.cursor]="isPointerOverlappingAnyPlot ? 'pointer' : 'default'" class="chart__container"></div>
+  <div #containerChart (mousemove)="updateCursor($event); updateCollision($event);" [style.cursor]="pointerOverlappingPlotId !== null ? 'pointer' : 'default'" class="chart__container"></div>
   <div class="chart__ticks">
     <div *ngFor="let item of ticks; trackBy: trackByIndex">
       <div [style.top]="item.y + 'px'" class="tick horizontal"></div>
