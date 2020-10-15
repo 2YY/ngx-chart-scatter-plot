@@ -1,0 +1,65 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  test:
+
+    runs-on: ubuntu-18.04
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Cache node modules
+        uses: actions/cache@v1
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.cache/yarn
+          key: ${{ runner.os }}-projectname-${{ hashFiles(format('{0}{1}', github.workspace, '/yarn.lock')) }}
+          restore-keys: |
+            ${{ runner.os }}-projectname-
+
+      - name: Install node modules
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: yarn
+
+      - name: Should pass linting
+        run: yarn run lint
+
+      - name: Should pass unit test
+        run: yarn run test -- --no-watch --no-progress --browsers=ChromeHeadlessCI
+
+      - name: Should succeed source building
+        run: yarn run build-storybook
+
+  coverage:
+    needs: [ test ]
+    name: coverage
+    runs-on: ubuntu-18.04
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Cache node modules
+        uses: actions/cache@v1
+        env:
+          cache-name: cache-node-modules
+        with:
+          path: ~/.cache/yarn
+          key: ${{ runner.os }}-projectname-${{ hashFiles(format('{0}{1}', github.workspace, '/yarn.lock')) }}
+          restore-keys: |
+            ${{ runner.os }}-projectname-
+
+      - name: Install node modules
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: yarn
+
+      - uses: paambaati/codeclimate-action@v2.7.4
+        env:
+          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
+        with:
+          coverageCommand: yarn run test -- --no-watch --no-progress --code-coverage --browsers=ChromeHeadlessCI
+          coverageLocations: ${{ github.workspace }}/coverage/ngx-overlay/lcov.info:lcov
