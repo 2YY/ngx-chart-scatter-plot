@@ -62,4 +62,4 @@ jobs:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         with:
           coverageCommand: yarn run test -- --no-watch --no-progress --code-coverage --browsers=ChromeHeadlessCI
-          coverageLocations: ${{ github.workspace }}/coverage/ngx-overlay/lcov.info:lcov
+          coverageLocations: ${{ github.workspace }}/coverage/ngx-chart-scatter-plot/lcov.info:lcov
