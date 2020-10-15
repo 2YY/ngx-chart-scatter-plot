@@ -1,5 +1,9 @@
 # NgxChartScatterPlot
 
+![Test](https://github.com/2YY/ngx-chart-scatter-plot/workflows/Test/badge.svg)
+[![Maintainability](https://api.codeclimate.com/v1/badges/f8d224cbfd705729a840/maintainability)](https://codeclimate.com/github/2YY/ngx-chart-scatter-plot/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/f8d224cbfd705729a840/test_coverage)](https://codeclimate.com/github/2YY/ngx-chart-scatter-plot/test_coverage)
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 9.1.8.
 
 ## Development server
