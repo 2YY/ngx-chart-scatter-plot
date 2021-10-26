@@ -6,6 +6,7 @@ import * as PIXI from '../lib/pixi.js';
 import {ChartOptions} from '../lib/chart-options';
 import {Plot} from '../lib/plot';
 import {v4 as uuid} from 'uuid';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 export default {
   title: 'ChartScatterPlot',
@@ -16,13 +17,21 @@ export default {
 @Component({
   selector: 'lib-basic-usage',
   template: `
-    <div class="chart">
-      <lib-ngx-chart-scatter-plot
-        #chartScatterPlot
-        [plots]="plots"
-        [camera]="camera"
-        [options]="options"
-        (mousedown)="
+    <ng-container>
+      <p [formGroup]='plotForm'>
+        <label>
+          <span>Plot Amount</span>
+          <input type='number' [formControlName]="'plotAmount'">
+        </label>
+        <button (click)="shufflePlot()" [disabled]="plotForm.invalid">Apply</button>
+      </p>
+      <div class="chart">
+        <lib-ngx-chart-scatter-plot
+          #chartScatterPlot
+          [plots]="plots"
+          [camera]="camera"
+          [options]="options"
+          (mousedown)="
           chartScatterPlotService.panStart(
             $event,
             camera,
@@ -30,10 +39,10 @@ export default {
             chartScatterPlotRef.getMatTransformToggleOrigin()
           )
         "
-        (mousemove)="camera = chartScatterPlotService.panMove($event, camera, options)"
-        (mouseup)="chartScatterPlotService.panEnd()"
-        (mouseleave)="chartScatterPlotService.panEnd()"
-        (wheel)="
+          (mousemove)="camera = chartScatterPlotService.panMove($event, camera, options)"
+          (mouseup)="chartScatterPlotService.panEnd()"
+          (mouseleave)="chartScatterPlotService.panEnd()"
+          (wheel)="
           camera = chartScatterPlotService.zoom(
             $event,
             camera,
@@ -42,8 +51,9 @@ export default {
             chartScatterPlotRef.getCursorPos()
           )
         "
-      ></lib-ngx-chart-scatter-plot>
-    </div>
+        ></lib-ngx-chart-scatter-plot>
+      </div>
+    </ng-container>
   `,
   styles: [`
     .chart {
@@ -58,32 +68,10 @@ export default {
 class ExampleComponent {
   @ViewChild('chartScatterPlot', {read: NgxChartScatterPlotComponent}) chartScatterPlotRef: NgxChartScatterPlotComponent;
 
-  // plots = this.examplePlotsData.generateRandomPlot(1000, -100, 100).map(v => {
-  //   v.position.x *= .5;
-  //   v.position.x += 50;
-  //   v.position.y *= .5;
-  //   v.position.y += 50;
-  //   return v;
-  // });
-  plots = [
-    {id: uuid(), position: new PIXI.Point(0, 0), r: 5, color: 0x000000, alpha: .618046972},
-    {id: uuid(), position: new PIXI.Point(-12.5, 5), r: 5, color: 0x000000, alpha: .618046972},
-    {id: uuid(), position: new PIXI.Point(-25, 0), r: 5, color: 0x000000, alpha: .618046972},
-    {id: uuid(), position: new PIXI.Point(-37.5, 5), r: 5, color: 0x000000, alpha: .618046972},
-    {id: uuid(), position: new PIXI.Point(-50, 0), r: 5, color: 0x000000, alpha: .618046972},
-    {id: uuid(), position: new PIXI.Point(-62.5, 5), r: 5, color: 0x000000, alpha: .618046972},
-    {id: uuid(), position: new PIXI.Point(-75, 0), r: 5, color: 0x000000, alpha: .618046972},
-    {id: uuid(), position: new PIXI.Point(-87.5, 5), r: 5, color: 0x000000, alpha: .618046972},
-    {id: uuid(), position: new PIXI.Point(-100, 0), r: 5, color: 0x000000, alpha: .618046972},
-    {id: uuid(), position: new PIXI.Point(12.5, 5), r: 5, color: 0x000000, alpha: .618046972},
-    {id: uuid(), position: new PIXI.Point(25, 0), r: 5, color: 0x000000, alpha: .618046972},
-    {id: uuid(), position: new PIXI.Point(37.5, 5), r: 5, color: 0x000000, alpha: .618046972},
-    {id: uuid(), position: new PIXI.Point(50, 0), r: 5, color: 0x000000, alpha: .618046972},
-    {id: uuid(), position: new PIXI.Point(62.5, 5), r: 5, color: 0x000000, alpha: .618046972},
-    {id: uuid(), position: new PIXI.Point(75, 0), r: 5, color: 0x000000, alpha: .618046972},
-    {id: uuid(), position: new PIXI.Point(87.5, 5), r: 5, color: 0x000000, alpha: .618046972},
-    {id: uuid(), position: new PIXI.Point(100, 0), r: 5, color: 0x000000, alpha: .618046972},
-  ];
+  plotForm = new FormGroup({
+    plotAmount: new FormControl('', [Validators.required, Validators.min(0)])
+  });
+  plots: Plot[] = [];
   camera = new PIXI.Rectangle(-100, -100, 100, 100);
   options: ChartOptions = {
     origin: 'leftBottom',
@@ -95,11 +83,15 @@ class ExampleComponent {
   constructor(public chartScatterPlotService: NgxChartScatterPlotService) {
   }
 
+  shufflePlot() {
+    this.plots = this.generateRandomPlot(parseInt(this.plotForm.get('plotAmount').value, 10), -100, 100);
+  }
+
   private static generateRandomFloat(min: number, max: number) {
     return Math.random() * (max - min) + min;
   }
 
-  generateRandomPlot(amount: number, min: number, max: number): Plot[] {
+  private generateRandomPlot(amount: number, min: number, max: number): Plot[] {
     const result = [];
     for (let i = 0; i < amount; i++) {
       result.push({
@@ -118,7 +110,7 @@ class ExampleComponent {
 
 @NgModule({
   declarations: [ExampleComponent],
-  imports: [NgxChartScatterPlotModule],
+  imports: [ReactiveFormsModule, NgxChartScatterPlotModule],
   exports: [ExampleComponent]
 })
 class ExampleModule {
