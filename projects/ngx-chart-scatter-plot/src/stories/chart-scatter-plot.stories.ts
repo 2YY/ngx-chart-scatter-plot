@@ -7,6 +7,7 @@ import {ChartOptions} from '../lib/chart-options';
 import {Plot} from '../lib/plot';
 import {v4 as uuid} from 'uuid';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 export default {
   title: 'ChartScatterPlot',
@@ -53,6 +54,7 @@ export default {
         "
         ></lib-ngx-chart-scatter-plot>
       </div>
+      <p *ngIf="chartScatterPlot.pointerOverlappingPlotId !== null">Hover: {{ chartScatterPlot.pointerOverlappingPlotId }}</p>
     </ng-container>
   `,
   styles: [`
@@ -95,6 +97,7 @@ class ExampleComponent {
     const result = [];
     for (let i = 0; i < amount; i++) {
       result.push({
+        id: i.toString(),
         position: new PIXI.Point(
           ExampleComponent.generateRandomFloat(min, max),
           ExampleComponent.generateRandomFloat(min, max)
@@ -110,7 +113,7 @@ class ExampleComponent {
 
 @NgModule({
   declarations: [ExampleComponent],
-  imports: [ReactiveFormsModule, NgxChartScatterPlotModule],
+  imports: [CommonModule, ReactiveFormsModule, NgxChartScatterPlotModule],
   exports: [ExampleComponent]
 })
 class ExampleModule {
