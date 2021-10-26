@@ -28,7 +28,6 @@ export class NgxChartScatterPlotComponent implements AfterViewInit {
 
   @Output() pointerdownPlot = new EventEmitter<Plot>();
   @Output() pointerupPlot = new EventEmitter<Plot>();
-  @Output() pointerupoutsidePlot = new EventEmitter<Plot>();
   @Output() pointeroverPlot = new EventEmitter<Plot>();
   @Output() pointeroutPlot = new EventEmitter<Plot>();
 
