@@ -153,14 +153,17 @@ export class NgxChartScatterPlotComponent implements AfterViewInit {
       .filter(v => this.isInScreenPlot(v))
       .map(v => ({id: v.id, r: v.r, position: this.matTransform.apply(v.position)}))
       .filter(v => mortonNumber === this.chartScatterPlotService.getMortonNumber(canvasSize, v.position));
-    sameMortonNumberPlots.reverse();
+    let hoveringId = null;
+    sameMortonNumberPlots.reverse(); // NOTE: Precedence upper layer plots.
     sameMortonNumberPlots.forEach((v, i) => {
       if (!isHit && v.r >= Math.sqrt(Math.pow(cursorPos.x - v.position.x, 2) + Math.pow(cursorPos.y - v.position.y, 2))) {
         isHit = true;
-        this.pointerOverlappingPlotId = v.id;
+        hoveringId = v.id;
       }
     });
-    if (!isHit) {
+    if (isHit && hoveringId !== this.pointerOverlappingPlotId) {
+      this.pointerOverlappingPlotId = hoveringId;
+    } else if (!isHit && this.pointerOverlappingPlotId !== null) {
       this.pointerOverlappingPlotId = null;
     }
   }
