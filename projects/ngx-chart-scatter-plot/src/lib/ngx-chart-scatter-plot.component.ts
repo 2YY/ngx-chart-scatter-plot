@@ -10,7 +10,7 @@ import {
   Output,
   ViewChild
 } from '@angular/core';
-import * as PIXI from './pixi.js';
+import * as PIXI from 'projects/ngx-chart-scatter-plot/src/lib/pixi.js';
 import {Plot} from './plot';
 import {ChartOptions} from './chart-options';
 import {NgxChartScatterPlotService} from './ngx-chart-scatter-plot.service';

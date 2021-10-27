@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import * as PIXI from './pixi.js';
+import * as PIXI from 'projects/ngx-chart-scatter-plot/src/lib/pixi.js';
 import {ChartOptions} from './chart-options';
 
 @Injectable({
