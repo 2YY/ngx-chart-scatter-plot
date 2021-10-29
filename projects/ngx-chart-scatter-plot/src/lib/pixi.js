@@ -20,6 +20,8 @@ export * from '@pixi/sprite';
 export * from '@pixi/app';
 export * from '@pixi/graphics';
 
+utils.skipHello();
+
 Renderer.registerPlugin('batch', BatchRenderer);
 
 Application.registerPlugin(TickerPlugin);
