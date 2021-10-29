@@ -1,31 +1,18 @@
 import {NgxChartScatterPlotModule} from '../lib/ngx-chart-scatter-plot.module';
-import {Component, NgModule, ViewChild} from '@angular/core';
+import { Component, Input, NgModule, ViewChild } from '@angular/core';
 import {NgxChartScatterPlotService} from '../lib/ngx-chart-scatter-plot.service';
 import {NgxChartScatterPlotComponent} from '../lib/ngx-chart-scatter-plot.component';
 import * as PIXI from '../lib/pixi.js';
 import {ChartOptions} from '../lib/chart-options';
 import {Plot} from '../lib/plot';
-import {v4 as uuid} from 'uuid';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-
-export default {
-  title: 'ChartScatterPlot',
-};
-
-////////////////////////////////////////////////////////////////////////////////////////////////////
+import { Meta, Story } from '@storybook/angular';
+import { Template } from '@angular/compiler/src/render3/r3_ast';
 
 @Component({
   selector: 'lib-basic-usage',
   template: `
     <ng-container>
-      <p [formGroup]='plotForm'>
-        <label>
-          <span>Plot Amount</span>
-          <input type='number' [formControlName]="'plotAmount'">
-        </label>
-        <button (click)="shufflePlot()" [disabled]="plotForm.invalid">Apply</button>
-      </p>
       <div class="chart">
         <lib-ngx-chart-scatter-plot
           #chartScatterPlot
@@ -70,9 +57,8 @@ export default {
 class ExampleComponent {
   @ViewChild('chartScatterPlot', {read: NgxChartScatterPlotComponent}) chartScatterPlotRef: NgxChartScatterPlotComponent;
 
-  plotForm = new FormGroup({
-    plotAmount: new FormControl('', [Validators.required, Validators.min(0)])
-  });
+  plotAmountData = 0;
+
   plots: Plot[] = [];
   camera = new PIXI.Rectangle(-100, -100, 100, 100);
   options: ChartOptions = {
@@ -82,14 +68,18 @@ class ExampleComponent {
     tickResolution: 4
   };
 
-  constructor(public chartScatterPlotService: NgxChartScatterPlotService) {
+  @Input() set plotAmount(amount: number) {
+    this.plotAmountData = amount;
+    this.reloadPlots();
   }
 
-  shufflePlot() {
-    this.plots = this.generateRandomPlot(parseInt(this.plotForm.get('plotAmount').value, 10), -100, 100);
+  constructor(public chartScatterPlotService: NgxChartScatterPlotService) {}
+
+  reloadPlots() {
+    this.plots = this.generateRandomPlot(this.plotAmountData, -100, 100);
   }
 
-  private static generateRandomFloat(min: number, max: number) {
+  private generateRandomFloat(min: number, max: number) {
     return Math.random() * (max - min) + min;
   }
 
@@ -99,8 +89,8 @@ class ExampleComponent {
       result.push({
         id: i.toString(),
         position: new PIXI.Point(
-          ExampleComponent.generateRandomFloat(min, max),
-          ExampleComponent.generateRandomFloat(min, max)
+          this.generateRandomFloat(min, max),
+          this.generateRandomFloat(min, max)
         ),
         color: 0x000000,
         alpha: .618046972,
@@ -113,18 +103,25 @@ class ExampleComponent {
 
 @NgModule({
   declarations: [ExampleComponent],
-  imports: [CommonModule, ReactiveFormsModule, NgxChartScatterPlotModule],
+  imports: [CommonModule, NgxChartScatterPlotModule],
   exports: [ExampleComponent]
 })
 class ExampleModule {
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////
-
-export const BasicUsage = () => ({
+export default {
+  title: 'ChartScatterPlot',
   component: ExampleComponent,
-  props: {},
   moduleMetadata: {
     imports: [NgxChartScatterPlotModule, ExampleModule]
   }
+} as Meta;
+
+const Template: Story<ExampleComponent> = (args) => ({
+  props: args
 });
+
+export const BasicUsage = Template.bind({});
+BasicUsage.args = {
+  plotAmount: 0
+};
